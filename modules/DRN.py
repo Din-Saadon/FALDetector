@@ -89,7 +89,6 @@ class Bottleneck(nn.Module):
 
         return out
 
-#    model = DRN(BasicBlock, [1, 1, 2, 2, 2, 2, 1, 1], arch='C', **kwargs)
 class DRN(nn.Module):
 
     def __init__(self, block, layers, num_classes=1000,
