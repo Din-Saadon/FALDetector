@@ -13,16 +13,14 @@ class Resample2dFunction(Function):
         ctx.kernel_size = kernel_size
         ctx.bilinear = bilinear
 
-        print(f'Resample2d :  img.size = {input1.size()}, flow_size (flow?) = {input2.size()}')
+        print(f'new resample')
         _, d, _, _ = input1.size()
         b, _, h, w = input2.size()
         output = input1.new(b, d, h, w).zero_()
 
-
+        print(f'before forward  \n output = {output.shape} ')
         resample2d_cuda.forward(input1, input2, output, kernel_size, bilinear)
-        print(f'Resample2d :  output shape = {output.shape}')
-        print(f'Resample2d :  output  = {output}')
-        print(f'Resample2d :  diff = {input1-output}')
+        print(f'after forward \n output = {output.shape}')
 
         return output
 
@@ -33,14 +31,14 @@ class Resample2dFunction(Function):
 
         input1, input2 = ctx.saved_tensors
 
-        grad_input1 = Variable(input1.new(input1.size()).zero_())
-        grad_input2 = Variable(input1.new(input2.size()).zero_())
+        #grad_input1 = Variable(input1.new(input1.size()).zero_())
+        #grad_input2 = Variable(input1.new(input2.size()).zero_())
 
-        resample2d_cuda.backward(input1, input2, grad_output.data,
-                                 grad_input1.data, grad_input2.data,
-                                 ctx.kernel_size, ctx.bilinear)
+        #resample2d_cuda.backward(input1, input2, grad_output.data,
+                                 #grad_input1.data, grad_input2.data,
+                                 #ctx.kernel_size, ctx.bilinear)
 
-        return grad_input1, grad_input2, None, None
+        return None, None, None, None
 
 class Resample2d(Module):
 
