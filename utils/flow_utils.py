@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os.path
+import cv2
+from imageio import imread
 
 TAG_CHAR = np.array([202021.25], np.float32)
 
@@ -153,6 +155,14 @@ def compute_color(u, v):
 
 	return img
 
+def flow_resize(flow, sz):
+    oh, ow, _ = flow.shape
+    w, h = sz
+    u_ = cv2.resize(flow[:,:,0], (w, h))
+    v_ = cv2.resize(flow[:,:,1], (w, h))
+    u_ *= w / float(ow)
+    v_ *= h / float(oh)
+    return np.dstack((u_,v_))
 
 def make_color_wheel():
 	"""
@@ -202,3 +212,5 @@ def make_color_wheel():
 	colorwheel[col:col + MR, 0] = 255
 
 	return colorwheel
+
+
