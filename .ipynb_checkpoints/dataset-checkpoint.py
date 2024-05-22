@@ -1,3 +1,4 @@
+import torch
 from utils.geometry import forward_backward_consistency_check
 from utils.tools import grouped_files_from_dir_list,SeedSetter,toTensor
 from utils.tools import read_gen , resize_gen
