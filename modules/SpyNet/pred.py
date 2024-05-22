@@ -189,6 +189,7 @@ if __name__ == '__main__':
         name_img = im1[:-4]
         name_img = name_img.split('/')[-1]
         flow_path = args_strOut + "/" + name_img + ".flo"
+        print(flow_path)
         objOutput = open(flow_path, 'wb')
     
         numpy.array([ 80, 73, 69, 72 ], numpy.uint8).tofile(objOutput)
