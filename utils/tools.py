@@ -5,7 +5,27 @@ import numpy as np
 from .flow_utils import readFlow , flow_resize
 from imageio import imread
 import cv2
- 
+from PIL import Image
+
+def resize_shorter_side(img, min_length):
+    """
+    Resize the shorter side of img to min_length while
+    preserving the aspect ratio.
+    """
+    ow, oh = img.size
+    mult = 8
+    if ow < oh:
+        if ow == min_length and oh % mult == 0:
+            return img, (ow, oh)
+        w = min_length
+        h = int(min_length * oh / ow)
+    else:
+        if oh == min_length and ow % mult == 0:
+            return img, (ow, oh)
+        h = min_length
+        w = int(min_length * ow / oh)
+    return img.resize((w, h), Image.BICUBIC), (w, h)
+
 def grouped_files_from_dir_list(dir_lst):
     files = [sorted([os.path.join(directory,file) for file in os.listdir(directory)]) for directory in dir_lst]
     return list(zip (*files) )
@@ -59,7 +79,6 @@ class TimerBlock:
         fid = open(fid, 'a')
         fid.write("%s\n"%(string))
         fid.close()
-
 
 def resize_gen(x_numpy,size):
     if(x_numpy.shape[2] == 2): # flow

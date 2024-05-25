@@ -39,17 +39,17 @@ class L_ms(Module):
         
     def forward(self, fx,Umo,M):
         lossvalue = 0
-            for i , grad_pair in enumerate(self.grad_lst)
-                M_t , M_f = _m_resize(M,self.strides[i])
-                #print(f"M_t shape {M_t} \n M_f shape{M_f}")
-                grad_t , grad_f =grad_pair
-                lossvalue += self.norm( M_t*(grad_t(fx)-grad_t(Umo) ) + self.norm( M_f*( grad_f(fx) - grad_f(Umo) ) )
+        for i , grad_pair in enumerate(self.grad_lst):
+            M_t , M_f = _m_resize(M,self.strides[i])
+            #print(f"M_t shape {M_t} \n M_f shape{M_f}")
+            grad_t , grad_f =grad_pair
+            lossvalue += self.norm( M_t*(grad_t(fx)-grad_t(Umo) )) + self.norm( M_f*( grad_f(fx) - grad_f(Umo) ) )
         return lossvalue
         
 class L_rec(Module):
     #flow factor should be negative
     def __init__(self,flow_factor):
-        super(L_epe, self).__init__()
+        super(L_rec, self).__init__()
         self.norm = L1()
         self.flow_factor = (-1) *flow_factor 
         self.resample = Resample2d()
@@ -60,7 +60,7 @@ class L_rec(Module):
 
 class L_tot(Module):
     def __init__(self,s_epe,s_ms,s_rec,flow_factor):
-        super(L_epe,self).__init__()
+        super(L_tot,self).__init__()
         self.s_epe = s_epe
         self.s_ms = s_ms
         self.s_rec = s_rec
