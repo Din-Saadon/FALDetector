@@ -1,4 +1,4 @@
-
+from .grad_cuda import grad_cuda
 from torch.nn.modules.module import Module
 from torch.autograd import Function, Variable
 

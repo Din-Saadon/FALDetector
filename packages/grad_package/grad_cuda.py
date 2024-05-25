@@ -1,3 +1,4 @@
+import torch
 # TO DO: convert to cuda package
 class grad_cuda():
     @staticmethod

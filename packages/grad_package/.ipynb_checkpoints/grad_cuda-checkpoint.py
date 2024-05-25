@@ -1,11 +1,11 @@
+import torch
 # TO DO: convert to cuda package
 class grad_cuda():
     @staticmethod
     #t = True => x axis , t=False => y axis
     def forward(input1, output, s, t):
       B,D,H,W = input1.size()
-      sx = 0 if t else s
-      sy = 0 if not t else s
+      sx,sy  = (0,s) if t else (s,0)
       for sample in range(B):
         for channel in range(D):
           for i in range(H):

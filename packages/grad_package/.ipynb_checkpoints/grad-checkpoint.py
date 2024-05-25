@@ -1,9 +1,8 @@
-
+from .grad_cuda import grad_cuda
 from torch.nn.modules.module import Module
 from torch.autograd import Function, Variable
 
 class GradFunction(Function):
-    #t = True => x , t=False => y
     @staticmethod
     def forward(ctx, input1, s=1, t= True):
         assert input1.is_contiguous()
