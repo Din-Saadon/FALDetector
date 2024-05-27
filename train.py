@@ -6,20 +6,12 @@ def parse_args():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
 
-    parser.add_argument('-p', '--preprocessing', action='store_true', default=False, 
-                        help='Flag to indicate if preprocessing should be done.')
     
     parser.add_argument('-Xm', '--modified_img_dir', type=str, required=True, 
                         help='Directory containing modified images.')
     
     parser.add_argument('-Xo', '--original_img_dir', type=str, required=True, 
                         help='Directory containing original images.')
-    
-    parser.add_argument('-Umo', '--Umo_dir', type=str, required=True, 
-                        help='Directory containing optical flow from modified to original images.')
-    
-    parser.add_argument('-Uom', '--Uom_dir', type=str, required=True, 
-                        help='Directory containing optical flow from original to modified images.')
     
     parser.add_argument('-i', '--input_size', type=str, default='800,800', 
                         help='Input size for the images (default: 800,800).')
