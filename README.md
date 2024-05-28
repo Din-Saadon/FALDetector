@@ -8,9 +8,6 @@ The dataset used for this project can be found at: [Photoshopped Faces on Kaggle
 
 ## Setup
 
-To set up the environment and install the necessary dependencies, follow these steps:
-
-
 ```
 conda env create -f environment.yml
 conda activate FALDetector
