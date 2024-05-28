@@ -6,6 +6,13 @@
 
 The dataset used for this project can be found at: [Photoshopped Faces on Kaggle](https://www.kaggle.com/datasets/tbourton/photoshopped-faces)
 
+## Download Pre-trained Model Weights:
+```
+
+wget https://www.dropbox.com/s/pby9dhpr6cqziyl/local.pth?dl=0 -O ./weights/local.pth
+
+```
+
 ## Install Conda:
 ```
 
