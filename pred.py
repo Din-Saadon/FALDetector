@@ -78,7 +78,7 @@ if __name__ == '__main__':
     reverse = makePIL(reverse_torch)
     # Saving the results
     modified.save(
-        os.path.join(dest_folder, 'cropped_input.jpg'),
+        os.path.join(dest_folder, 'input.jpg'),
         quality=90)
     reverse.save(
         os.path.join(dest_folder, 'warped.jpg'),
