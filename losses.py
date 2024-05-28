@@ -61,13 +61,13 @@ class L_rec(Module):
         return self.norm(Xo_like,Xo)
 
 class L_tot(Module):
-    def __init__(self,s_epe,s_ms,s_rec,flow_factor):
+    def __init__(self,s_epe,s_ms,s_rec,flow_factor,strides):
         super(L_tot,self).__init__()
         self.s_epe = s_epe
         self.s_ms = s_ms
         self.s_rec = s_rec
         self.loss_epe = L_epe()
-        self.loss_ms = L_ms()
+        self.loss_ms = L_ms(strides)
         self.loss_rec = L_rec(flow_factor)
     def forward(self, fx, Xo , Xm ,Umo , M):
-        return self.s_epe*self.loss_epe(fx,Umo,M) # +self.s_ms*self.loss_ms(fx,Umo,M)+self.s_rec*self.loss_rec(fx,Xo,Xm)
+        return self.s_epe*self.loss_epe(fx,Umo,M) +self.s_ms*self.loss_ms(fx,Umo,M)+self.s_rec*self.loss_rec(fx,Xo,Xm)
