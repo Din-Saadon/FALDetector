@@ -45,7 +45,7 @@ def parse_args():
                         help='Strides for multi-scale loss (default: 2,8,32,64).')
     parser.add_argument('-epochs','--num_epochs', type=int, default=1,
                         help='Number of epochs (default: 1).')
-    parser.add_argument('--batch_size', type=int, default=32,
+    parser.add_argument('-bs','--batch_size', type=int, default=32,
                         help='Batch size (default: 32).')
     parser.add_argument('--lr', type=float, default=1e-4,
                         help='Learning rate (default: 1e-4).')
@@ -71,25 +71,47 @@ def parse_args():
     s_ms = args.s_ms
     s_rec = args.s_rec
     strides_ms = args.strides_ms
-    num_of_epochs = args.num_of_epochs
+    num_epochs = args.num_epochs
     batch_size = args.batch_size
     lr = args.lr
     b1 = args.b1
     b2 = args.b2
+       # Print the arguments
+    print(f"Modified image directory: {modified_img_dir}")
+    print(f"Original image directory: {original_img_dir}")
+    print(f"Input size: {input_size}")
+    print(f"Flow factor: {flow_factor}")
+    print(f"Checkpoint: {checkpoint}")
+    print(f"Save checkpoint: {save_checkpoint}")
+    print(f"Scalar for Loss EPE: {s_epe}")
+    print(f"Scalar for multi-scale loss: {s_ms}")
+    print(f"Scalar for reconstruction loss: {s_rec}")
+    print(f"Strides for multi-scale loss: {strides_ms}")
+    print(f"Number of epochs: {num_epochs}")
+    print(f"Batch size: {batch_size}")
+    print(f"Learning rate: {lr}")
+    print(f"Beta1 for Adam optimizer: {b1}")
+    print(f"Beta2 for Adam optimizer: {b2}")
 
     return (modified_img_dir, original_img_dir, input_size, flow_factor, 
             checkpoint, save_checkpoint, s_epe, s_ms, s_rec, strides_ms, 
-            num_of_epochs, batch_size, lr, b1, b2)
+            num_epochs, batch_size, lr, b1, b2)
 
 if __name__ == "__main__":
     (modified_img_dir, original_img_dir, input_size, flow_factor, 
      checkpoint, save_checkpoint, s_epe, s_ms, s_rec, strides_ms, 
-     num_epochs, batch_size, lr, b1, b2) = parse_args()    
+     num_epochs, batch_size, lr, b1, b2) = parse_args()
+    print(parse_args())
     dir_lst = [original_img_dir,modified_img_dir]
     normalize = v2.Normalize(mean=[0.485, 0.456, 0.406],std=[0.229, 0.224, 0.225])
     ds = Photoshopped_Faces(dir_lst,size = input_size,transform=normalize)
+    ds_size = len(ds)
+    test_size = int(0.05*ds_size)
+    valid_size = int(0.15*ds_size)
+    train_size = ds_size - valid_size - test_size
+    print("ds_size" , ds_size)
     with SeedSetter(42): 
-        train ,val ,test= torch.utils.data.random_split(ds, [800, 180,20])
+        train ,val ,test= torch.utils.data.random_split(ds, [train_size, valid_size,test_size])
     train_loader = DataLoader(
         dataset=train,
         batch_size=batch_size,
@@ -104,10 +126,9 @@ if __name__ == "__main__":
     )
     #check if cuda is available:
     if torch.cuda.is_available():
-        device = 'cuda:{}'.format(args.gpu_id)
+        device = 'cuda:{}'.format(0)
     else:
-        print("cuda is unavailable!")
-        exit()
+        device = 'cpu'
         
     #pretrained DRN model:
     model = DRNSeg(2)
@@ -118,7 +139,7 @@ if __name__ == "__main__":
     
     #set optimizer
     optimizer = torch.optim.Adam(model.parameters(),lr,(b1,b2))
-    loss_total = L_tot(s_epe = s_epe , s_ms = s_ms , s_rec = s_rec , flow_factor=flow_factor)
+    loss_total = L_tot(s_epe = s_epe , s_ms = s_ms , s_rec = s_rec , flow_factor=flow_factor,strides = strides_ms)
     
     best_val_loss = float('inf')
     best_model_path = save_checkpoint
@@ -136,12 +157,10 @@ if __name__ == "__main__":
             optimizer.zero_grad()  # Zero the gradients
             outputs = model(Xm).to(device=device)  # Forward pass
             outputs = Variable(outputs.data, requires_grad=True)
-            print("computer loss:")
             loss = loss_total(outputs,Xo,Xm,Umo,M) # Compute loss
-            print("backward:")
+            loss.requires_grad = True
             loss.backward()  # Backward pass
             optimizer.step()  # Update weights
-    
             train_loss += loss.item()  # Accumulate loss
     
         # Validation phase
@@ -155,7 +174,6 @@ if __name__ == "__main__":
                 outputs = model(Xm).to(device=device)  # Forward pass
                 loss = loss_total(outputs,Xo,Xm,Umo,M)  # Compute loss
                 val_loss += loss.item()  # Accumulate loss
-    
         val_loss /= len(val_loader)  # Calculate average validation loss
     
         # Save the best model
@@ -166,4 +184,3 @@ if __name__ == "__main__":
     
         # Print epoch summary
         print(f'Epoch {epoch+1}/{num_epochs}, Train Loss: {train_loss/len(train_loader):.4f}, Validation Loss: {val_loss:.4f}')
-
