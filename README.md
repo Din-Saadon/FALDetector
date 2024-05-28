@@ -6,7 +6,7 @@
 
 The dataset used for this project can be found at: [Photoshopped Faces on Kaggle](https://www.kaggle.com/datasets/tbourton/photoshopped-faces)
 
-## install conda:
+## Install Conda:
 ```
 
  curl -fsSLO https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
