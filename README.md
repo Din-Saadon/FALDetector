@@ -2,14 +2,52 @@
 
 
 
-## Dataset
+## Dataset:
 
 The dataset used for this project can be found at: [Photoshopped Faces on Kaggle](https://www.kaggle.com/datasets/tbourton/photoshopped-faces)
 
-## Setup
+## install conda:
+```
+
+ curl -fsSLO https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+ bash Miniconda3-latest-Linux-x86_64.sh
+
+```
+
+
+## Setup:
 
 ```
 conda env create -f environment.yml
 conda activate FALDetector
 ./install.sh
+```
+
+## Training Command:
+
+```
+python train.py \
+    --original_data_dir <path_to_original_dataset> \
+    --modified_data_dir <path_to_modified_dataset> \
+    --checkpoint_path <path_to_checkpoint_model> \
+    --batch_size <batch_size_value> \
+    --save_checkpoint_dir <directory_to_save_model_checkpoints> \
+    --epochs <number_of_epochs> \
+    --input_dimensions <input_dimensions_value> \
+    --strides <stride_values>
+
+## For additional arguments and usage, run: python train.py --help
+
+```
+
+## Prediction Command:
+
+```
+python pred.py \
+    --input_data_path <path_to_input_data> \
+    --output_directory <path_to_output_directory> \
+    --model_checkpoint <path_to_model_checkpoint>
+
+## For additional arguments and usage, run: python pred.py --help
+
 ```
