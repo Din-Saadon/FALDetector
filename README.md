@@ -1,6 +1,6 @@
 # Detecting Photoshopped Faces by Scripting Photoshop
 
-
+https://arxiv.org/pdf/1906.05856
 
 ## Dataset:
 
