@@ -39,7 +39,7 @@ python train.py \
     --checkpoint <path_to_checkpoint_model> \
     --batch_size <batch_size_value> \
     --save_checkpoint_dir <directory_to_save_model_checkpoints> \
-    --epochs <number_of_epochs> \
+    --num_epochs <number_of_epochs> \
     --input_size <input_dimensions_value> \
     --strides_ms <stride_values>
 
