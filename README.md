@@ -36,12 +36,12 @@ conda activate FALDetector
 python train.py \
     --original_data_dir <path_to_original_dataset> \
     --modified_data_dir <path_to_modified_dataset> \
-    --checkpoint_path <path_to_checkpoint_model> \
+    --checkpoint <path_to_checkpoint_model> \
     --batch_size <batch_size_value> \
     --save_checkpoint_dir <directory_to_save_model_checkpoints> \
     --epochs <number_of_epochs> \
-    --input_dimensions <input_dimensions_value> \
-    --strides <stride_values>
+    --input_size <input_dimensions_value> \
+    --strides_ms <stride_values>
 
 ## For additional arguments and usage, run: python train.py --help
 
