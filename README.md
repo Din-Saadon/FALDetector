@@ -34,8 +34,8 @@ conda activate FALDetector
 
 ```
 python train.py \
-    --original_data_dir <path_to_original_dataset> \
-    --modified_data_dir <path_to_modified_dataset> \
+    --original_img_dir <path_to_original_dataset> \
+    --modified_img_dir <path_to_modified_dataset> \
     --checkpoint <path_to_checkpoint_model> \
     --batch_size <batch_size_value> \
     --save_checkpoint_dir <directory_to_save_model_checkpoints> \
