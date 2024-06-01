@@ -143,44 +143,52 @@ if __name__ == "__main__":
     
     best_val_loss = float('inf')
     best_model_path = save_checkpoint
-    
-    
-    for epoch in range(num_epochs):
-        model.train()  # Set model to training mode
-        train_loss = 0.0
-    
-        # Training loop with tqdm progress bar
-        for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}/{num_epochs} - Training", leave=False):
+import torch
+from torch.autograd import Variable
+from tqdm import tqdm
+
+# Assuming you have defined your model, loss function, optimizer, and data loaders
+
+for epoch in range(num_epochs):
+    model.train()  # Set model to training mode
+    model.enable_input_require_grads()
+    train_loss = 0.0
+
+    # Training loop with tqdm progress bar
+    for batch in tqdm(train_loader, desc=f"Epoch {epoch+1}/{num_epochs} - Training", leave=False):
+        batch = [t.cuda() for t in batch]  # Move data to GPU if available
+        Xo, Xm, Umo, M = batch
+        optimizer.zero_grad()  # Zero the gradients
+        outputs = model(Xm).to(device=device)  # Forward pass
+        
+        loss = loss_total(outputs, Xo, Xm, Umo, M)  
+        loss.requires_grad_()# Compute loss
+        loss.backward()  # Backward pass
+        optimizer.step()  # Update weights
+        
+        train_loss += loss.item()  # Accumulate loss
+
+    # Validation phase
+    model.eval()  # Set model to evaluation mode
+    val_loss = 0.0
+    with torch.no_grad():  # Disable gradient computation
+        for batch in tqdm(val_loader, desc=f"Epoch {epoch+1}/{num_epochs} - Validation", leave=False):
             batch = [t.cuda() for t in batch]
-            batch = [Variable(t.data, requires_grad=False) for t in batch]
-            Xo , Xm , Umo , M = batch
-            optimizer.zero_grad()  # Zero the gradients
+            Xo, Xm, Umo, M = batch
+            
             outputs = model(Xm).to(device=device)  # Forward pass
-            outputs = Variable(outputs.data, requires_grad=True)
-            loss = loss_total(outputs,Xo,Xm,Umo,M) # Compute loss
-            loss.requires_grad = True
-            loss.backward()  # Backward pass
-            optimizer.step()  # Update weights
-            train_loss += loss.item()  # Accumulate loss
-    
-        # Validation phase
-        model.eval()  # Set model to evaluation mode
-        val_loss = 0.0
-        with torch.no_grad():  # Disable gradient computation
-            for batch in tqdm(val_loader, desc=f"Epoch {epoch+1}/{num_epochs} - Validation", leave=False):
-                batch = [t.cuda() for t in batch]
-                batch = [Variable(t.data, requires_grad=False) for t in batch]
-                Xo , Xm , Umo , M = batch
-                outputs = model(Xm).to(device=device)  # Forward pass
-                loss = loss_total(outputs,Xo,Xm,Umo,M)  # Compute loss
-                val_loss += loss.item()  # Accumulate loss
-        val_loss /= len(val_loader)  # Calculate average validation loss
-    
-        # Save the best model
-        if val_loss < best_val_loss:
-            best_val_loss = val_loss
-            torch.save(model.state_dict(), best_model_path)  # Save best model checkpoint
-            print(f'Saved best model with loss: {best_val_loss:.4f}')
-    
-        # Print epoch summary
-        print(f'Epoch {epoch+1}/{num_epochs}, Train Loss: {train_loss/len(train_loader):.4f}, Validation Loss: {val_loss:.4f}')
+            loss = loss_total(outputs, Xo, Xm, Umo, M)  # Compute loss
+            val_loss += loss.item()  # Accumulate loss
+
+    # Calculate average losses
+    train_loss /= len(train_loader)
+    val_loss /= len(val_loader)
+
+    # Save the best model
+    if val_loss < best_val_loss:
+        best_val_loss = val_loss
+        torch.save(model.state_dict(), best_model_path)  # Save best model checkpoint
+        print(f'Saved best model with loss: {best_val_loss:.4f}')
+
+    # Print epoch summary
+    print(f'Epoch {epoch+1}/{num_epochs}, Train Loss: {train_loss:.4f}, Validation Loss: {val_loss:.4f}')
