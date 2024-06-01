@@ -1,5 +1,5 @@
 import torch
-# TO DO: convert to cuda package
+# TO DO: convert to cuda package .
 class grad_cuda():
     @staticmethod
     #t = True => x axis , t=False => y axis
