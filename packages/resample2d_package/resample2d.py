@@ -13,7 +13,6 @@ class Resample2dFunction(Function):
         ctx.kernel_size = kernel_size
         ctx.bilinear = bilinear
 
-        print(f'Resample2d :  input1_size (img?) = {input1.size()}, input2_size (flow?) = {input2.size()}')
         _, d, _, _ = input1.size()
         b, _, h, w = input2.size()
         output = input1.new(b, d, h, w).zero_()
