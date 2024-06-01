@@ -151,7 +151,6 @@ from tqdm import tqdm
 
 for epoch in range(num_epochs):
     model.train()  # Set model to training mode
-    model.enable_input_require_grads()
     train_loss = 0.0
 
     # Training loop with tqdm progress bar
